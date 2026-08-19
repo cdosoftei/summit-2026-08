@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understudy &amp; SingleConsole</title>
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<div id="sv">
+  <div id="sv-clock">
+    <span class="t">00:00</span>
+    <button id="sv-toggle">start</button>
+    <button id="sv-reset">reset</button>
+    <span class="meta"></span>
+  </div>
+  <div id="sv-notes"><h4>Notes</h4><div class="body"></div></div>
+  <div id="sv-next"><h4>Next</h4><div class="kick"></div><div class="title"></div></div>
+</div>
+
+<main id="stage">
+
+<!-- ============ OPEN ============ -->
+
+<section class="slide title" data-tag="open">
+  <div class="lockup"><img src="../assets/singlecomm-logo-on-dark.svg" alt="SingleComm"></div>
+  <h1>Understudy<br>&amp; SingleConsole</h1>
+  <div class="rule"></div>
+  <p class="sub">Two products, three ways to put AI to work —<br>and one rule about where the model sits.</p>
+  <aside class="notes">
+    <p class="do">The Tower sim is already running on the projector. Do NOT open on this slide.</p>
+    <p class="say">"That's nine hundred agent consoles. Right now a hundred and sixty-two things are wrong on that fleet. I'm going to show you seven sentences that cover all of them — and one of the seven says the problem is us, and another says the problem is nobody. Hold that thought."</p>
+    <p><strong>Then</strong> switch to the deck. The cliffhanger stays open until the Control Tower section.</p>
+    <p class="do">Say the stop-me-here rule now: "Interrupt me — I'd rather this was a conversation."</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="framing">
+  <h2>Three projects. Three different places to put a model.</h2>
+  <div class="cols-3">
+    <div class="card">
+      <div class="tag">Understudy</div>
+      <h3>AI as operator</h3>
+      <p>The model calls <strong>our</strong> tool.</p>
+      <p>Software written for an audience of agents, not humans.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Control Tower</div>
+      <h3>AI as proposer</h3>
+      <p>It reads evidence and proposes a <strong>rule</strong>.</p>
+      <p>A human approves. The deterministic engine runs it.</p>
+    </div>
+    <div class="card">
+      <div class="tag">sctower</div>
+      <h3>AI as investigator</h3>
+      <p>An <strong>AI-agent-ready CLI</strong>, shipped with its own skill — so an agent can pick it up and troubleshoot without being taught.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>This is the spine. Everything after hangs off it.</p>
+    <p class="say">"These aren't three versions of the same thing. They're three different positions of the model relative to the loop."</p>
+    <p><strong>Ties to tomorrow:</strong> the agenda has a bullet called "deterministic and non-deterministic boundaries". This is the worked answer to it.</p>
+  </aside>
+</section>
+
+<!-- ============ UNDERSTUDY ============ -->
+
+<section class="slide section" data-tag="understudy">
+  <div class="kicker">Part one · AI as operator</div>
+  <h1>Understudy</h1>
+  <p class="sub">Software written for an audience of machines.</p>
+  <aside class="notes"><p class="do">Aim for ~20 minutes including questions.</p></aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <h2>The scenarios that matter are the ones you can't stage alone</h2>
+  <ul>
+    <li>Anything with <strong>two or more participants</strong> talking at the same time</li>
+    <li>A warm transfer, then a supervisor listening in</li>
+    <li>A customer who switches language mid-call</li>
+    <li>A network that dies <em>during</em> the call</li>
+  </ul>
+  <p class="wide" style="margin-top:2vh">Every one of those needs people, phones, and an afternoon. So they get tested once, by hand, badly — and then never again.</p>
+  <aside class="notes">
+    <p class="do">Look at QA on "tested once, by hand, badly". This slide is for them.</p>
+    <p>Deliberately no counts — the point is "more than one party", not a number.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <h2>Synthetic participants that stand in for real people</h2>
+  <p class="wide">One browser tab is one understudy. It injects a synthetic microphone (text-to-speech) and a synthetic camera, then joins as a real party over the real signalling.</p>
+  <ul>
+    <li>It touches only <strong>public seams</strong> — the same browser APIs any customer's browser uses<small>Never application internals. That keeps the test honest and lets it survive the app being rewritten underneath it.</small></li>
+    <li>The <strong>platform is the system under test</strong> — Understudy drives every party, customer <em>and</em> agent</li>
+    <li>Voice, webchat and SingleMeet — inbound and outbound</li>
+  </ul>
+  <aside class="notes">
+    <p class="say">"It isn't a mock. There's a real SIP registration, a real FreeSWITCH conference, a real LiveKit room. The only synthetic thing is the human."</p>
+    <p><strong>Numbers if asked:</strong> 8 packages, 69 committed scenarios, 274 unit tests, ~97% coverage.</p>
+  </aside>
+</section>
+
+<section class="slide center" data-tag="understudy">
+  <p class="statement">And the thing that drives it<br>is <span class="hl">not me</span>.</p>
+  <aside class="notes"><p class="do">Beat. Then next slide.</p></aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <h2>The inversion</h2>
+  <p class="wide">Understudy ships a <strong>skill</strong>. A coding agent working a ticket loads it, stands up the exact call the ticket describes, and asserts on what came back.</p>
+  <pre><span class="c"># the agent does this, not me</span>
+pnpm understudy run scenarios/voice/r3a-healthfirst-inbound \
+    --env qa <span class="f">--execute</span>
+
+<span class="c"># and this, when it thinks it is done</span>
+pnpm understudy run scenarios/voice/r3a-healthfirst-inbound \
+    --env qa --execute <span class="f">--check-baseline</span></pre>
+  <div class="callout">An agent that can only read code is guessing. An agent that can <strong>place a call and listen to what came back</strong> is verifying.</div>
+  <aside class="notes">
+    <p class="do">Show <code>skills/understudy/SKILL.md</code> briefly — the do/don't list is the interesting part.</p>
+    <p><strong>Mention the guard unprompted:</strong> every scenario declares which environments it may run on, and production is forbidden by construction. That is what makes letting an agent do this reasonable rather than terrifying.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <h2>A scenario is a file you can read</h2>
+  <pre>id: meet.customer-captions-smoke
+tickets: [ACDDEV-2231]
+env: { require: [dev, qa], <span class="f">forbid: [prod]</span> }
+
+parties:
+  - id: customer
+    channel: { type: meet, direction: inbound, campaign: meet-captions-demo }
+    captions: { on: true, language: en }
+    media:
+      audio:
+        source: tts
+        turns:
+          - { text: <span class="s">'Hola, necesito ayuda con mi factura.'</span>, lang: es }
+          - { text: <span class="s">'Thank you, I will switch to English now.'</span>, lang: en }
+
+expect:
+  - assert: <span class="s">'customer.captions.langs includes [en]'</span>
+  - assert: <span class="s">'customer.captions.text(en) matches /(help|bill|invoice)/i'</span></pre>
+  <aside class="notes">
+    <p class="say">"A synthetic customer speaks Spanish. The assertion is that English captions came back. That's a real test of the translation path — and it fits on a slide."</p>
+    <p><strong>Readability is the argument.</strong> If QA can read it, QA can write it.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <h2>Every scenario, indexed</h2>
+  <pre>pnpm understudy catalog   <span class="c">→ docs/catalog.html</span></pre>
+  <p class="wide">Ticket, channel, audience, and whether it is green. Committed alongside the scenarios, so the index cannot drift from what exists.</p>
+  <aside class="notes">
+    <p class="do">Run it live — no cluster needed, instant. Open the HTML and scroll.</p>
+    <p class="do">Hand the choice to QA: "which of these would you have wanted for the last release?"</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <span class="mode">Live · QA</span>
+  <h2>Now watch it happen</h2>
+  <pre>pnpm understudy run scenarios/voice/r3a-healthfirst-inbound \
+    --env qa --execute <span class="f">--headed</span></pre>
+  <p class="wide">Headed mode is the point. You are not reading a report about a call — you are watching the console the agent would be looking at, while a synthetic customer talks to it.</p>
+  <aside class="notes">
+    <p class="do">Full sequence, if you want to show the build too:</p>
+    <p class="do"><code>pnpm build &amp;&amp; pnpm bundle:runtime &amp;&amp; pnpm bundle:voice</code> → <code>node scripts/capture-session.mjs qa</code> → <code>--pool agent</code> → run.</p>
+    <p class="say">"This is the confidence I want before anything goes to UAT. Not 'the tests passed' — I watched the thing happen."</p>
+    <p><strong>If the two parties talk over each other:</strong> name it. "The turn-taking here is naive — both sides speak on a timer rather than waiting for silence. It doesn't change the assertions, and it's on my list."</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <span class="mode">Live · QA</span>
+  <h2>And the one that looks like the future</h2>
+  <pre>pnpm understudy run scenarios/meet/attribution-4party-multilang \
+    --env qa --execute <span class="f">--headed --hold</span></pre>
+  <p class="wide">Four people in one SingleMeet room — English, Spanish and French — with live captions for all of them.</p>
+  <div class="callout">Nobody in this room could stage that in an afternoon. It is one command, and it is repeatable tomorrow.</div>
+  <aside class="notes">
+    <p class="do">Prerequisites, once: <code>set -a; source secrets/qa.env; set +a</code> then <code>pnpm bundle:runtime &amp;&amp; pnpm bundle:meet</code>. No captured session needed — all four parties are standalone, so nobody signs into a console.</p>
+    <p class="do"><strong>Watch one window, not all four.</strong> With <code>--headed</code> each party now renders a tile grid of the whole room — itself plus the other three — with a caption strip underneath. Maximise one window and let the others sit behind it.</p>
+    <p class="do"><code>--hold</code> keeps the windows open until you press Enter. Use it.</p>
+    <p class="say">"Riley opens the room, then Sofía, Pierre and Dana join it. Four phases: clean alternation, then rapid interjections, then long turns, then a closing round."</p>
+    <p><strong>What it is really for:</strong> measuring caption speaker <em>attribution</em> — one mixed speech stream serves the whole room, so who said what is inferred afterwards. Each caption in the strip is tagged with the identity the worker attributed it to, so a misattribution is visible on screen. Say that if anyone asks why the script sounds so stilted.</p>
+    <p class="do">This is the most visually striking moment in the session. Let it run.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="understudy">
+  <h2>The bit QA should care about most</h2>
+  <div class="cols">
+    <div>
+      <h3>Record</h3>
+      <pre>understudy save scenarios/…</pre>
+      <p>Freezes a green run's assertion baseline.</p>
+    </div>
+    <div>
+      <h3>Replay</h3>
+      <pre>understudy run … <span class="f">--check-baseline</span></pre>
+      <p>Diffs against it. <strong>Fails on any regression.</strong></p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:3vh">A bug repro becomes a <strong>committed regression test</strong>. The repro <em>is</em> the artefact — not a ticket comment describing one.</div>
+  <aside class="notes">
+    <p class="do">Show the recorded <em>failure</em>, not the pass. Failures are more persuasive.</p>
+    <p class="say">"This is the thing I actually wanted when I started building it. Everything else is machinery around this sentence."</p>
+  </aside>
+</section>
+
+<!-- ============ SINGLECONSOLE ============ -->
+
+<section class="slide section" data-tag="singleconsole">
+  <div class="kicker">Part two</div>
+  <h1>SingleConsole</h1>
+  <p class="sub">A testable agent console — and the room to grow past the old one.</p>
+</section>
+
+<section class="slide" data-tag="singleconsole">
+  <h2>Why the classic console can't be saved</h2>
+  <div class="cols">
+    <div class="stat"><span class="n">116</span><span class="l">classic AJAX verbs the console speaks</span></div>
+    <div class="stat"><span class="n">36</span><span class="l">signalling frame types on the wire</span></div>
+  </div>
+  <p class="wide" style="margin-top:4vh">PHP 7.4, jQuery, no build step, no tests, and no seam to test at — the console <em>is</em> the DOM and the wire at the same time. You cannot refactor out of that. <strong>You can only grow something beside it.</strong></p>
+  <aside class="notes">
+    <p class="do">45 seconds. The room knows. Don't dwell.</p>
+    <p>Strangling fig, with the honest caveat: a fig only strangles if it keeps growing. The fidelity audit is how we know it is growing rather than stalling.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="singleconsole">
+  <h2>Headless kernel, interchangeable shells</h2>
+  <p class="wide" style="margin-bottom:2.5vh"><strong>React renders. The kernel decides.</strong> All state lives somewhere with no DOM dependency — which is what makes four deployments one product instead of four forks.</p>
+  <div class="cols-4">
+    <div class="card">
+      <div class="tag">shipped</div>
+      <h3>Built in</h3>
+      <p>A module inside the platform — "Agent Desktop". Same page, same session, same permissions.</p>
+    </div>
+    <div class="card">
+      <div class="tag">shipped</div>
+      <h3>Widget</h3>
+      <p>A bundle that drops into third-party products — CRMs, ticketing, whatever the client already lives in.</p>
+    </div>
+    <div class="card">
+      <div class="tag">in progress</div>
+      <h3>Desktop</h3>
+      <p>An Electron shell running the <strong>same codebase</strong> as the browser build — not a parallel implementation.</p>
+    </div>
+    <div class="card muted">
+      <div class="tag">planned</div>
+      <h3>Native</h3>
+      <p>Rust / Qt, once the web version has stabilised — and kept in step with it from then on.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p class="say">"The reason to do the headless split first is exactly this row. The expensive part of a desktop client is the logic, and the logic is already written once."</p>
+    <p><strong>Founders slide.</strong> Native is the answer to "what about the clients who won't run this in a browser".</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="singleconsole">
+  <span class="mode">Live · QA</span>
+  <h2>Agent Desktop</h2>
+  <p class="wide">Real cluster. Real agent. Real call.</p>
+  <aside class="notes">
+    <p class="do">Console mounts inside the classic header. Change presence. Take a call. Try to submit wrap-up without a disposition — it refuses, and <strong>the kernel enforces that, not the UI</strong>.</p>
+    <p class="say">"Same page, same session, same permissions. It's a module — it doesn't need a migration to exist."</p>
+    <p class="do">Three minutes. This is the "it's real" beat, not the wow beat.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="singleconsole">
+  <span class="mode">Live · local</span>
+  <h2>The same kernel, inside someone's CRM</h2>
+  <pre>pnpm dev  <span class="c">→ localhost:5280  ?composition=widget</span></pre>
+  <p class="wide">A stand-in host page. The widget is self-contained: the host supplies a signalling port and an area for scripts, and neither side reaches into the other.</p>
+  <aside class="notes">
+    <p class="do">Point at the host bar: "third-party CRM — the widget is self-contained".</p>
+    <p class="say">"This is the commercial door. We can put the console inside a customer's product without them touching our stack, and without us touching theirs."</p>
+  </aside>
+</section>
+
+<!-- ============ CONTROL TOWER ============ -->
+
+<section class="slide section" data-tag="tower">
+  <div class="kicker">Part three · AI as proposer</div>
+  <h1>Control Tower</h1>
+  <p class="sub">Back to the map.</p>
+</section>
+
+<section class="slide" data-tag="tower">
+  <span class="mode">Live · simulated fleet</span>
+  <h2>900 consoles. Same seed, same fleet, every time.</h2>
+  <pre>pnpm demo:tower</pre>
+  <ul>
+    <li><strong>From a real census</strong> of 1,387 production consoles — browser mix, CPU and RAM, in-call rate, device topology, trouble rates</li>
+    <li><strong>From a production probe</strong> — geography, site egress, latency</li>
+    <li><strong>Invented, and the code says so</strong> — individual names, call timing</li>
+  </ul>
+  <div class="callout">The <strong>SIMULATED DATA</strong> bar cannot be dismissed. It is one of four locks that stop this shipping by accident.<span class="who">Same software as production. Synthetic data. Both true at once.</span></div>
+  <aside class="notes">
+    <p class="do">Point at the bar. It makes the honesty self-evidencing — you don't have to claim it.</p>
+    <p><strong>Talk freely here</strong> over the seven sentences, the hidden-window story, and the expanded finding. Slides deliberately get out of the way.</p>
+    <p class="do">Hand a finding to ops: "pick one — which of these would you want to be true?"</p>
+    <p>Rehearsal: <code>&amp;poll=2</code> runs the arc in three minutes. Do not edit source while rehearsing — HMR resets the clock to tick 0.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="tower">
+  <h2>What the old console could never tell us</h2>
+  <table>
+    <tr><td class="k">live</td><td>beaconing normally</td></tr>
+    <tr><td class="k hot">silent</td><td><strong>expected, and not heard from</strong></td></tr>
+    <tr><td class="k">ended</td><td>signed out cleanly, with a reason</td></tr>
+    <tr><td class="k hot">vanished</td><td>stopped mid-shift with no goodbye</td></tr>
+  </table>
+  <p class="wide" style="margin-top:3vh">These are <strong>liveness states</strong> — whether we are still hearing from a console at all. Nothing to do with agent status, which is about what the person is doing.</p>
+  <aside class="notes">
+    <p class="say">"A console whose network has gone doesn't report the outage. It stops reporting. The board gets <em>quieter</em> while people can't work. That's the failure mode this whole thing exists for."</p>
+    <p class="do">Be explicit that this is not presence/agent status — that confusion is the one thing this slide has to prevent.</p>
+  </aside>
+</section>
+
+<section class="slide center" data-tag="tower">
+  <div class="ask">
+    <p class="q">Of every agent console running in production right now —<br><br>what percentage is the <em>focused window</em>?</p>
+  </div>
+  <aside class="notes">
+    <p class="do">ASK THE ROOM. Take guesses out loud. Don't move on until three people have answered. People guess 40–60%.</p>
+    <p><strong>The answer, delivered verbally:</strong> 7% are focused. 69% are not even visible. Measured across 1,387 real consoles.</p>
+    <p class="say">"A browser throttles a hidden tab's timers to about one a minute. So a console behind a spreadsheet beacons late and looks exactly like one in trouble. On a fleet this size that's forty of eighty-six quiet consoles who are completely fine — and saying so is forty phone calls not made."</p>
+  </aside>
+</section>
+
+<section class="slide center" data-tag="tower">
+  <p class="statement sm"><span class="hl">Watch</span> is what we can prove.<br><br><span class="hl">Review</span> is what we suspect.</p>
+  <aside class="notes">
+    <p>These are literally the two tab names. Verbs, not nouns — "findings" and "last night" both just meant "problems".</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="tower">
+  <h2>Review, on one screen</h2>
+  <div class="cols">
+    <div class="card">
+      <div class="tag">a rule</div>
+      <h3>Counted something</h3>
+      <p>It knows an error happened a lot last night. It is <strong>not allowed to read the error text</strong>, so it cannot tell you what it was.</p>
+    </div>
+    <div class="card">
+      <div class="tag">a proposal</div>
+      <h3>Explains it</h3>
+      <p>Read the evidence and says what the error actually is — labelled <strong>inferred</strong>, with its reasoning, how sure it is, and <em>what would prove it wrong</em>.</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:3vh">The night before, a proposal whose output was <strong>a new rule — and the backtest showing it would have caught this</strong>.</div>
+  <aside class="notes">
+    <p class="do"><strong>Say out loud: no model runs in the simulation.</strong> The shape is what's being shown; the job it slots into is real.</p>
+    <p>Saying that unprompted is worth more than the demo — it's the difference between a demo and an engineering claim.</p>
+    <p>The falsifier is the interesting part: a proposal that can't say what would prove it wrong is an opinion, not a finding.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="tower">
+  <h2>Why the model never gets to press the button</h2>
+  <ul>
+    <li><strong>It suggests. People decide. The engine acts.</strong><small>Whatever runs is something a human already reviewed, so a bad suggestion is a wasted minute rather than an incident.</small></li>
+    <li><strong>Pick from a list before writing prose</strong><small>"Which of these known problems is this?" — with "none of them" always allowed. Free text is a fallback, and it is labelled as unverified wherever it appears.</small></li>
+    <li><strong>"Certain" and "probably" are different kinds of thing</strong><small>Not two ends of one scale — otherwise a 97% guess quietly starts behaving like a fact.</small></li>
+    <li><strong>Every suggestion is scored afterwards</strong><small>Shown, accepted, run, and then: did it actually work? A suggestion that keeps working becomes a rule we ship. That is how it improves without a model anywhere near the runtime.</small></li>
+  </ul>
+  <aside class="notes">
+    <p class="say">"The learning lands as reviewed, versioned, switch-off-able data — not as a model that quietly changed its mind."</p>
+    <p><strong>Tomorrow hook:</strong> that scoring ledger is the one piece of shared AI platform I'd argue for.</p>
+  </aside>
+</section>
+
+<section class="slide center" data-tag="tower">
+  <p class="statement">We use models to <span class="hl">find the rules</span> —<br>then run the rules <span class="hl">without the model</span>.</p>
+  <aside class="notes"><p>Say it, don't explain it. Move on.</p></aside>
+</section>
+
+<section class="slide" data-tag="rescue">
+  <h2>The last rung</h2>
+  <table>
+    <tr><td class="k">healthy</td><td>both channels answering</td></tr>
+    <tr><td class="k">degraded</td><td>one channel silent — whichever works carries the evidence</td></tr>
+    <tr><td class="k">impacted</td><td>the agent's work is affected, but we can still see them</td></tr>
+    <tr><td class="k">isolated</td><td>signalling and telemetry silent — but the rescue path answered</td></tr>
+    <tr><td class="k hot">dark</td><td><strong>nothing the workstation can reach answers</strong></td></tr>
+  </table>
+  <p class="wide" style="margin-top:3vh">Only <code>dark</code> raises a flare — and only after <strong>20 seconds</strong> of holding it. An isolated console still reports itself. Only a dark one needs a human with a phone.</p>
+  <aside class="notes">
+    <p class="say">"The flare is the loudest thing the product can do, so it's the last rung and not the first."</p>
+    <p><strong>Then run it live.</strong> Teammate's laptop, Agent Desktop, Available. Ask them to switch off wifi. Twenty seconds. Scan the QR with your phone.</p>
+    <p class="do">When the Tower badge lights: <strong>stop talking for three seconds.</strong> Let "that came off a dead machine" land on its own.</p>
+    <p>The QR points at the agent's own cluster, deliberately — not at whatever origin served the page.</p>
+  </aside>
+</section>
+
+<!-- ============ SCTOWER ============ -->
+
+<section class="slide section" data-tag="sctower">
+  <div class="kicker">Part four · AI as investigator</div>
+  <h1>sctower</h1>
+  <p class="sub">One static binary. And a skill.</p>
+</section>
+
+<section class="slide" data-tag="sctower">
+  <span class="mode">Live · QA</span>
+  <h2>Sign in like a person</h2>
+  <pre>sctower auth login
+<span class="c">→ OAuth 2.1 + PKCE, system browser, ephemeral loopback listener</span>
+<span class="c">→ stored 0600, refreshed silently</span>
+
+sctower live
+sctower digest</pre>
+  <aside class="notes">
+    <p><strong>The server side needed nothing new</strong> — the cluster already required PKCE of every client and already implemented the loopback rule.</p>
+    <p class="do"><code>digest</code> is the money command: it prints the same sentences the Tower draws. Shows the CLI isn't a lesser surface.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="sctower">
+  <h2>What makes it something an agent can hold</h2>
+  <pre>sctower watch --since 1h <span class="f">&amp;&amp;</span> echo clean</pre>
+  <table style="margin-top:2vh">
+    <tr><td class="k">0</td><td>the question was answered</td></tr>
+    <tr><td class="k hot">1</td><td>answered, <strong>and the answer is "something is wrong"</strong></td></tr>
+    <tr><td class="k">2</td><td>usage error</td></tr>
+    <tr><td class="k">3</td><td>auth failed</td></tr>
+    <tr><td class="k">4</td><td>tower unreachable</td></tr>
+    <tr><td class="k">5</td><td>tower answered, but refused</td></tr>
+  </table>
+  <p class="wide" style="margin-top:2.5vh">JSON by default when nobody is watching. Stable field names taken from the contract — not a view of it.</p>
+  <aside class="notes">
+    <p class="say">"Exit 1 is not a failure. It's an answer. An agent that can tell 'I couldn't reach the tower' from 'the tower says you have a problem' can actually triage — and one that can't will hallucinate the difference, confidently."</p>
+    <p><strong>Then show the skill</strong> — its troubleshooting reference leads with exactly that trap.</p>
+  </aside>
+</section>
+
+<section class="slide" data-tag="sctower">
+  <span class="mode">Live</span>
+  <h2 class="plain">And because you're all engineers</h2>
+  <pre style="margin-top:3vh">sctower ui</pre>
+  <aside class="notes">
+    <p class="do">Run it. Say almost nothing. Move around: <code>j</code>/<code>k</code>, <code>enter</code> to open a session, tab through the drawer tabs, <code>/</code> to filter.</p>
+    <p class="say">"Same client. Same data. Over SSH."</p>
+  </aside>
+</section>
+
+<section class="slide title center" data-tag="close">
+  <div class="lockup"><img src="../assets/singlecomm-logo-on-dark.svg" alt="SingleComm"></div>
+  <h1 style="font-size:calc(var(--u) * 7)">Thank you</h1>
+  <div class="rule" style="margin-left:auto;margin-right:auto"></div>
+  <p class="sub">This presentation was not AI generated.<br>It only looks that way.</p>
+  <aside class="notes">
+    <p class="do">Leave this up and take the room.</p>
+  </aside>
+</section>
+
+</main>
+
+<div id="logo">
+  <img class="on-dark" src="../assets/singlecomm-logo-on-dark.svg" alt="">
+  <img class="on-light" src="../assets/singlecomm-logo-on-light.svg" alt="">
+</div>
+<div id="bar"></div>
+<div id="num"></div>
+<div id="tag"></div>
+
+<div id="help">
+  <table>
+    <tr><td class="k">→ ␣ n</td><td>next</td></tr>
+    <tr><td class="k">← p</td><td>previous</td></tr>
+    <tr><td class="k">S</td><td>speaker view (notes + timer)</td></tr>
+    <tr><td class="k">F</td><td>fullscreen</td></tr>
+    <tr><td class="k">O / Esc</td><td>overview</td></tr>
+    <tr><td class="k">T</td><td>light / dark</td></tr>
+    <tr><td class="k">B / .</td><td>blank the screen</td></tr>
+    <tr><td class="k">1–99</td><td>jump to slide</td></tr>
+    <tr><td class="k">?</td><td>this</td></tr>
+  </table>
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>

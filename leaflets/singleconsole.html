@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SingleConsole &amp; Control Tower</title>
+<link rel="stylesheet" href="leaflet.css">
+<script src="paper.js"></script>
+</head>
+<body class="dense">
+
+<!-- ================= PAGE 1 ================= -->
+<section class="page">
+
+  <div class="mast">
+    <div class="brand"><img src="../assets/singlecomm-logo-on-light.svg" alt="SingleComm"></div>
+    <div class="eyebrow">Engineering</div>
+    <h1>SingleConsole</h1>
+    <p class="tagline">A testable agent console — and the first time we can see what our fleet is actually doing, including the consoles that have stopped talking to us.</p>
+  </div>
+
+  <p class="lede">The classic console speaks 116 AJAX verbs and 36 signalling frame types, in PHP 7.4 and jQuery, with no build step and no seam to test at. You cannot refactor your way out of that. You can only <em>grow something beside it</em> — and then let it strangle the old tree.</p>
+
+  <div class="stats">
+    <div class="stat"><span class="n">41</span><span class="l">workspace packages behind one headless kernel</span></div>
+    <div class="stat"><span class="n">3,533</span><span class="l">unit tests; coverage is a gate, not a report</span></div>
+    <div class="stat"><span class="n">4</span><span class="l">channels proven end to end: inbound, outbound, omni, meet</span></div>
+    <div class="stat"><span class="n">65<span style="font-size:.55em"> kB</span></span><span class="l">gzipped widget bundle, embeddable anywhere</span></div>
+  </div>
+
+  <h2>React renders. The kernel decides.</h2>
+  <p>All state lives in a kernel with <strong>no DOM dependency</strong>. Shells are interchangeable, which is what makes four deployments one product rather than four forks — and it is why the expensive part of a desktop or native client is already written.</p>
+  <div class="cols" style="grid-template-columns:repeat(4,1fr);gap:4mm">
+    <div class="box">
+      <h3>Built in <span class="pill">shipped</span></h3>
+      <p style="font-size:8pt;margin:0">A module inside the platform — "Agent Desktop". Same page, same session, same permissions.</p>
+    </div>
+    <div class="box">
+      <h3>Widget <span class="pill">shipped</span></h3>
+      <p style="font-size:8pt;margin:0">A bundle that drops into third-party products — CRMs, ticketing, whatever the client already lives in.</p>
+    </div>
+    <div class="box">
+      <h3>Desktop <span class="pill">in progress</span></h3>
+      <p style="font-size:8pt;margin:0">An Electron shell running the <strong>same codebase</strong> as the browser build — not a parallel implementation.</p>
+    </div>
+    <div class="box">
+      <h3>Native <span class="pill grey">planned</span></h3>
+      <p style="font-size:8pt;margin:0">Rust / Qt, once the web version has stabilised, and kept in step with it from then on.</p>
+    </div>
+  </div>
+
+  <h2>Control Tower — and the state the old console could never see</h2>
+  <p>Every console beacons roughly every twenty seconds, and the Tower reads four <strong>liveness</strong> states from that — whether we are still hearing from a machine at all. This is not agent status, which is about what the person is doing.</p>
+  <table>
+    <tr><td class="k">live</td><td>beaconing normally</td></tr>
+    <tr><td class="k hot">silent</td><td><strong>expected, and not heard from.</strong> The one that matters — a console whose network has gone does not report the outage, it <em>stops reporting</em>. The board gets quieter while people cannot work.</td></tr>
+    <tr><td class="k">ended</td><td>signed out cleanly, with a reason — a final beacon on the way out</td></tr>
+    <tr><td class="k hot">vanished</td><td>stopped mid-shift with no goodbye</td></tr>
+  </table>
+
+  <div class="box quote">
+    <h3 style="margin-top:0">The number that reframes everything</h3>
+    <p style="margin:0">A census of <strong>1,387 real production consoles</strong> found that <strong>93% are not the focused window and 69% are not even visible.</strong> Browsers throttle a hidden tab's timers to roughly one a minute — so a console behind a spreadsheet beacons late and looks exactly like one in trouble. On a 900-console fleet that is <strong>forty of eighty-six quiet consoles that are completely fine</strong>. Saying so is forty phone calls not made.</p>
+  </div>
+
+  <div class="runner"><span>SingleConsole</span><span>SingleComm Engineering</span></div>
+</section>
+
+<!-- ================= PAGE 2 ================= -->
+<section class="page">
+
+  <h2 style="margin-top:0">A flight recorder that cannot leak</h2>
+  <p>Each session carries a sealed, size-bounded, hash-chained event ring, plus <strong>a manifest declaring what is absent</strong> — evicted, decimated or stripped. Redaction is by construction rather than by filter: a registry declares, per field, whether it is allowed through, reduced to a shape, or dropped and counted. Unregistered event types cannot be recorded at all.</p>
+  <p class="footnote">Never captured, by design: message bodies, caller name or number, screen contents, audio, script field values, raw device identifiers.</p>
+
+  <h2>Rescue — evidence off a machine that cannot reach us</h2>
+  <p>Browser alive, network gone. The console walks a ladder — <code>healthy → degraded → impacted → isolated → dark</code> — and only <code>dark</code>, held twenty seconds, raises a <strong>flare</strong>: a <strong>QR code</strong> carrying a sealed capsule with the workstation, the session, the time and the console's state. Someone photographs the screen. The code points at <strong>the agent's own cluster</strong>, deliberately not at whatever origin served the page, so the scan lands beside the session it belongs to. A <strong>spoken short code</strong> comes first in the reading order, because the person who needs this may be at a dark monitor with no camera.</p>
+
+  <h2>The AI play: Watch and Review</h2>
+  <table>
+    <tr>
+      <td class="k">Watch</td>
+      <td><strong>What we can prove.</strong> Deterministic rules, live, in-process. A rule that is <em>certain</em> can raise a finding immediately, tell the agent mid-call, and drive a repair with no human in the loop. Certainty is a distinct kind of answer, not a high score.</td>
+    </tr>
+    <tr>
+      <td class="k hot">Review</td>
+      <td><strong>What we suspect.</strong> An overnight pass over redacted evidence. Where no deterministic rule matched, a model proposes — labelled <strong>inferred</strong>, with its reasoning, how sure it is, and <em>what would prove it wrong</em>. Sometimes the output is a new rule, together with the backtest showing it would have caught the thing.</td>
+    </tr>
+  </table>
+
+  <div class="box blue">
+    <p style="margin:0;font-size:11pt;line-height:1.4"><strong>We don't put models in the loop. We use models to find the rules — then run the rules without the model.</strong></p>
+  </div>
+
+  <h3>The four boundaries that make that true</h3>
+  <ul>
+    <li><strong>It suggests, people decide, the engine acts.</strong> Whatever runs is something a human already reviewed, so a bad suggestion costs a minute rather than an incident.</li>
+    <li><strong>Pick from a list before writing prose.</strong> "Which of these known problems is this?" — with "none of them" always allowed. Free text is a fallback, labelled unverified wherever it appears, and never an action button.</li>
+    <li><strong>Evidence, not raw dumps.</strong> Summarised measurements and a redacted bundle. Scoped to one tenant, and switchable off per tenant without disabling any deterministic layer.</li>
+    <li><strong>Every suggestion is scored afterwards.</strong> Shown, accepted, run — and then, did it actually work? One that keeps working becomes a rule we ship. <strong>The system improves without a model anywhere near the runtime</strong>, because the learning lands as reviewed, versioned, switch-off-able data.</li>
+  </ul>
+
+  <h3>sctower — the same tower, for people and for agents</h3>
+  <div class="cols">
+    <div>
+      <pre style="margin:0">sctower auth login   <span class="c"># OAuth 2.1 + PKCE, loopback</span>
+sctower live · digest · session &lt;id&gt; --tab timeline
+sctower probe &lt;id&gt; · rescue &lt;code&gt; · ui</pre>
+    </div>
+    <div>
+      <p style="margin:0">One static binary, shipped with <strong>its own skill</strong> so an agent can pick it up without being taught. <code>sctower watch --since 1h &amp;&amp; echo clean</code> — exit <strong>1</strong> means <em>answered, and the answer is bad</em>; exit <strong>4</strong> means unreachable. An agent that can tell those apart can triage; one that cannot will hallucinate the difference.</p>
+    </div>
+  </div>
+
+  <h2>Where it stands</h2>
+  <table>
+    <tr>
+      <td class="k">Shipped</td>
+      <td>The kernel, four channels, the built-in module and the embeddable widget · the flight recorder · Control Tower's live and retrospective halves · self-repair and silence detection · the CLI and its terminal UI</td>
+    </tr>
+    <tr>
+      <td class="k">In flight</td>
+      <td>Rescue in every shipped shell · the desktop build · Review running against a real model · post-call detection from the call records we already write</td>
+    </tr>
+    <tr>
+      <td class="k">Designed</td>
+      <td>In-call detection from the live media plane · a cross-cluster view for operations · a native client</td>
+    </tr>
+  </table>
+
+  <div class="runner"><span>SingleConsole</span><span>SingleComm Engineering</span></div>
+</section>
+
+</body>
+</html>

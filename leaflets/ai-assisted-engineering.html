@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI-Assisted Engineering — practices</title>
+<link rel="stylesheet" href="leaflet.css">
+<script src="paper.js"></script>
+</head>
+<body class="dense">
+
+<!-- ================= PAGE 1 ================= -->
+<section class="page">
+
+  <div class="mast">
+    <div class="brand"><img src="../assets/singlecomm-logo-on-light.svg" alt="SingleComm"></div>
+    <div class="eyebrow">Engineering</div>
+    <h1>AI-Assisted Engineering</h1>
+    <p class="tagline">Practices that hold up when a machine writes the code — drawn from what is already working across our repositories.</p>
+  </div>
+
+  <p class="lede">The productivity question has been settled; the interesting question is <em>trust</em>. An agent will cheerfully produce a thousand lines that compile, pass, and are wrong. Everything below exists to make that failure mode visible in minutes rather than in production — and each item is running in a SingleComm repository today.</p>
+
+  <h2>1 · Give the agent context, once, in the repository</h2>
+  <p>The single highest-return artefact is a file that explains the codebase to whoever opens it next — human or otherwise.</p>
+  <table>
+    <tr>
+      <td class="k">Repository instructions</td>
+      <td>One committed file describing structure, conventions and the rules that are <em>not</em> guessable. The ACD's is thirteen kilobytes and its most valuable line is a warning: two PHP generations live in this tree, and idioms must not cross between them. An agent cannot infer that; it will confidently write modern code into the legacy half.<span class="note">Include the directory map, naming tables, build and validation commands, and the traps that have already cost someone a day.</span></td>
+    </tr>
+    <tr>
+      <td class="k">Skills, one per domain</td>
+      <td>Packaged domain knowledge an agent loads on demand instead of being re-taught each session. Ours live in a shared, version-controlled repository with its own linting — treated as code, reviewed as code. A skill is also how a tool becomes usable by an agent at all: both Understudy and the tower CLI ship one.</td>
+    </tr>
+    <tr>
+      <td class="k">Decision records</td>
+      <td>The most under-rated context there is. SingleConsole carries 27, and each states <strong>the invariant its code must not break</strong>. Handing an agent the decision beats any amount of prompt engineering, because it explains what would be wrong rather than what to type.</td>
+    </tr>
+    <tr>
+      <td class="k">Contracts, not prose</td>
+      <td>Where two implementations must agree, write the contract as a committed schema and generate the conformance suite from it. Our detection rules, status precedence and token shapes are pinned this way, and the same suite runs in PHP, TypeScript and Go — so "the CLI and the browser disagree" is a test failure, not a ticket.</td>
+    </tr>
+  </table>
+
+  <h2>2 · Shape the work so it can be finished</h2>
+  <ul>
+    <li><strong>Ask for a plan before code</strong> on anything non-trivial, and read it. Wrong assumptions are cheap to correct in a paragraph and expensive to correct in a branch.</li>
+    <li><strong>One coherent outcome per task.</strong> "Add the endpoint, migrate the schema, and refactor the caller" is three tasks; given as one, the weakest drags down the review of the other two.</li>
+    <li><strong>Name the verification up front.</strong> If you cannot say how the work will be checked, the agent will invent a check that passes.</li>
+    <li><strong>Delegate exploration, keep the decisions.</strong> Search and inventory suit a sub-agent working in parallel; architecture and trade-offs do not.</li>
+    <li><strong>Run more than one at a time</strong> on genuinely independent work — and resist it on anything touching the same files.</li>
+  </ul>
+
+  <h2>3 · The boundary: what stays human</h2>
+  <div class="cols">
+    <div class="box">
+      <h3>The agent is good at</h3>
+      <ul style="margin-bottom:0">
+        <li>Mechanical breadth — renames, migrations, test scaffolding</li>
+        <li>Exploration and inventory across a large tree</li>
+        <li>Applying a pattern that already exists, consistently</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>You still own</h3>
+      <ul style="margin-bottom:0">
+        <li>What the invariant is, and what may never break</li>
+        <li>Whether the abstraction earns its keep</li>
+        <li>Anything touching money, identity or customer data</li>
+        <li>The decision to ship</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="runner"><span>AI-Assisted Engineering</span><span>SingleComm Engineering</span></div>
+</section>
+
+<!-- ================= PAGE 2 ================= -->
+<section class="page">
+
+  <h2 style="margin-top:0">4 · Reviewing work you did not type</h2>
+  <p>Reading the diff is necessary and nowhere near sufficient. These are the checks that have actually caught things, with what each one is for.</p>
+  <table>
+    <tr>
+      <td class="k">Gates, not reports</td>
+      <td>Coverage thresholds that <em>fail the command</em> rather than printing a number. SingleConsole holds 95% lines and 90% branches across 3,533 tests; Understudy ~97%. A threshold nobody enforces is a comment.</td>
+    </tr>
+    <tr>
+      <td class="k hot">Mutation testing</td>
+      <td><strong>The one to adopt first.</strong> Coverage tells you a line <em>ran</em>; mutation asks whether anything <em>breaks if that line is wrong</em>. It found three real bugs in SingleConsole, the best of them a hand-rolled QR encoder emitting invalid codes that still looked exactly like QR codes — every structural test passed and no phone could read one.<span class="note">Not a pull-request gate: scope it to pure-logic packages where the tests are fast enough to run hundreds of times.</span></td>
+    </tr>
+    <tr>
+      <td class="k">Derived checks</td>
+      <td>Checks that recompute a property rather than comparing to a snapshot. Our contrast validator re-derives every theme and preset token pair against the accessibility standard, and has caught eleven real regressions — including white call-to-action text on a bright background that looked fine to everyone who reviewed it.</td>
+    </tr>
+    <tr>
+      <td class="k">Visual diffing</td>
+      <td>Shoot every state before and after, then generate a side-by-side gallery. Deterministic inputs make the two runs directly comparable, which is what makes a stray two-pixel shift visible. The gallery is self-contained, so it attaches to the pull request.</td>
+    </tr>
+    <tr>
+      <td class="k">Dead-code hygiene</td>
+      <td>A scan for unused exports, files and dependencies, run as its own command. Generated code accretes orphans faster than hand-written code does, and nobody notices until the build is slow.</td>
+    </tr>
+    <tr>
+      <td class="k">Two layers of test</td>
+      <td>A hermetic layer on every pull request — production build, real browser, no network, deterministic — and a live layer against a real cluster on a schedule. Matching identifiers across the two mean a failure in either names the same behaviour.</td>
+    </tr>
+    <tr>
+      <td class="k">Watch it happen</td>
+      <td>For anything involving real-time media, an assertion is not enough. Run it headed and look. Understudy exists so that "I watched a synthetic customer talk to the console" is a thing you can do in one command, repeatably.</td>
+    </tr>
+  </table>
+
+  <h2>5 · Guardrails, so autonomy is safe rather than brave</h2>
+  <ul>
+    <li><strong>Declare where a thing may run.</strong> Every Understudy scenario names its permitted environments and forbids production by construction. This is the single change that makes letting an agent execute anything reasonable.</li>
+    <li><strong>Never have an agent type a credential.</strong> Capture a session once, interactively, and let the tooling reuse it. Secrets stay references, never values, and never reach a transcript.</li>
+    <li><strong>Make the safe thing structural.</strong> Our recorder cannot store a field its registry does not permit — unregistered types are dropped and counted. That is a stronger guarantee than a reviewer remembering to check, and it survives the next contributor.</li>
+    <li><strong>Meaningful exit codes.</strong> A tool an agent drives must distinguish "I could not reach it" from "I reached it and the answer is bad". Given one signal for both, an agent will confidently invent the difference.</li>
+    <li><strong>Determinism where you can afford it.</strong> One seeded generator means the same input produces the same world on any machine, forever — which is what makes a failure reproducible and a demo rehearsable.</li>
+  </ul>
+
+  <h2>6 · If you take four things away</h2>
+  <div class="box blue">
+    <ol style="margin:0 0 0 4mm;padding:0">
+      <li style="margin-bottom:1.4mm"><strong>Write the repository instructions.</strong> An afternoon, and it improves every session anyone has afterwards.</li>
+      <li style="margin-bottom:1.4mm"><strong>Turn on mutation testing</strong> for your pure-logic code and read the survivors. It is the fastest way to find out whether your tests assert anything.</li>
+      <li style="margin-bottom:1.4mm"><strong>Say how the work will be verified</strong> in the same breath as asking for it.</li>
+      <li><strong>Build the tool the agent needs</strong>, and ship it with a skill. The leverage is not in using AI — it is in what you hand it.</li>
+    </ol>
+  </div>
+
+  <p class="footnote" style="margin-top:3mm">Everything cited here is in a SingleComm repository and can be run today: repository instructions and skills in the ACD tree; decision records, contracts, mutation and contrast checks and the two-layer suite in SingleConsole; environment guards, baselines and headed runs in Understudy.</p>
+
+  <div class="runner"><span>AI-Assisted Engineering</span><span>SingleComm Engineering</span></div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Understudy</title>
+<link rel="stylesheet" href="leaflet.css">
+<script src="paper.js"></script>
+</head>
+<body class="dense">
+
+<!-- ================= PAGE 1 ================= -->
+<section class="page">
+
+  <div class="mast">
+    <div class="brand"><img src="../assets/singlecomm-logo-on-light.svg" alt="SingleComm"></div>
+    <div class="eyebrow">Engineering</div>
+    <h1>Understudy</h1>
+    <p class="tagline">Synthetic participants that stand in for real people — so an AI agent can prove its own work before a human ever sees it.</p>
+  </div>
+
+  <p class="lede">The scenarios that matter are the ones you can't stage alone. Two or more people talking at once. A warm transfer, then a supervisor listening in. A customer who switches language mid-call. A network that dies <em>during</em> the call. Each needs people, phones and an afternoon — so it gets tested once, by hand, and then never again.</p>
+
+  <div class="stats">
+    <div class="stat"><span class="n">3&nbsp;&times;&nbsp;2</span><span class="l">channels × directions: SingleMeet, voice, webchat</span></div>
+    <div class="stat"><span class="n">69</span><span class="l">committed scenarios, validated on real clusters</span></div>
+    <div class="stat"><span class="n">274</span><span class="l">unit tests, ~97% coverage, enforced as a gate</span></div>
+    <div class="stat"><span class="n">4</span><span class="l">concurrent synthetic callers, distinct agents</span></div>
+  </div>
+
+  <h2>What it is</h2>
+  <div class="cols">
+    <div>
+      <p>One browser tab is one <strong>understudy</strong>. It injects a synthetic microphone (text-to-speech) and a synthetic camera, then joins as a real party over the real signalling — a real SIP registration, a real conference, a real media room.</p>
+      <p>It touches only <strong>public seams</strong> — the same browser APIs any customer's browser uses — never application internals. That keeps a test honest, and lets it survive the app being rewritten underneath it.</p>
+      <p>The platform is the system under test. Understudy drives <em>every</em> party — customer and agent both.</p>
+    </div>
+    <div>
+      <div class="box">
+        <h3>Three kinds of party</h3>
+        <dl class="kv">
+          <dt>co-resident</dt><dd>a real product page — the agent console, the customer widget — with media injected into it</dd>
+          <dt>standalone</dt><dd>a minimal channel client; parties enter dynamically through public APIs</dd>
+          <dt>api-only</dt><dd>no tab at all; supporting counterparties driven purely over the API</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <h2>The AI play: the model drives it</h2>
+  <p>Most tooling is built for humans and then wrapped for machines. Understudy is the other way round. It ships a <strong>skill</strong>, and a coding agent working a ticket loads it, stands up the exact call the ticket describes, and asserts on what came back — evidence instead of "the diff looks right".</p>
+
+  <div class="box quote">
+    <p style="margin:0"><strong>An agent that can only read code is guessing. An agent that can place a call and listen to what came back is verifying.</strong></p>
+  </div>
+
+  <h2>A scenario is a file you can read</h2>
+  <pre>id: meet.customer-captions-smoke          tickets: [ACDDEV-2231]
+env: { require: [dev, qa], <span class="f">forbid: [prod]</span> }     <span class="c"># the guard — why an agent may run it</span>
+
+parties:
+  - id: customer
+    channel: { type: meet, direction: inbound, campaign: meet-captions-demo }
+    captions: { on: true, language: en }
+    media:
+      audio: { source: tts, turns: [
+        { text: <span class="s">'Hola, necesito ayuda con mi factura.'</span>, lang: es },
+        { text: <span class="s">'Thank you, I will switch to English now.'</span>, lang: en } ] }
+
+expect:
+  - assert: <span class="s">'customer.captions.langs includes [en]'</span>
+  - assert: <span class="s">'customer.captions.text(en) matches /(help|bill|invoice)/i'</span></pre>
+  <p class="footnote">A synthetic customer speaks Spanish; the assertion is that English captions came back from the live translation path. If QA can read it, QA can write it.</p>
+
+  <div class="runner"><span>Understudy</span><span>SingleComm Engineering</span></div>
+</section>
+
+<!-- ================= PAGE 2 ================= -->
+<section class="page">
+
+  <h2 style="margin-top:0">Three verbs, and the one that matters</h2>
+  <div class="cols">
+    <div>
+      <pre style="margin-bottom:2mm">understudy run &lt;dir&gt; --env qa --execute
+   <span class="c">--headed   watch it happen</span>
+   <span class="c">--replicas N   fan out to N concurrent parties</span>
+
+understudy save &lt;dir&gt; --env qa
+   <span class="c">freeze a green run's assertion baseline</span>
+
+understudy catalog
+   <span class="c">browsable index of every committed scenario</span></pre>
+    </div>
+    <div class="box quote">
+      <h3 style="margin-top:0">The sentence that matters</h3>
+      <p style="margin:0">Run with <code>--check-baseline</code> and the run is diffed against the saved baseline and <strong>fails on any regression</strong>. Which means: <strong>a bug repro becomes a committed regression test.</strong> The repro <em>is</em> the artefact — not a ticket comment describing one.</p>
+    </div>
+  </div>
+
+  <h2>Headed mode is the point</h2>
+  <p>The same command with <code>--headed</code> puts the browsers on screen. You are not reading a report about a call — you are watching the console an agent would be looking at, while a synthetic customer talks to it. Four people in one room across three languages, captions live, is one command and a repeatable one.</p>
+  <div class="box blue">
+    <p style="margin:0">That is the confidence to have <em>before</em> something reaches UAT: not "the tests passed", but "I watched it happen, and I can watch it again tomorrow".</p>
+  </div>
+
+  <h2>Where AI is actually used</h2>
+  <table>
+    <tr>
+      <td class="k">Voices</td>
+      <td>Local text-to-speech by default; a hosted voice when natural audio matters. <strong>Cached by content hash</strong> — text, language, voice, parameters — so a line renders once and every later run is deterministic and free. Reuses an existing vendor credential rather than adding one.</td>
+    </tr>
+    <tr>
+      <td class="k">Observed, not generated</td>
+      <td>Live captions produced by the platform's own speech pipeline are what assertions match against. The AI under test is the product's, not the harness's.</td>
+    </tr>
+    <tr>
+      <td class="k">The operator</td>
+      <td>The coding agent itself, through the shipped skill. This is the primary relationship: <strong>the model is the user.</strong></td>
+    </tr>
+  </table>
+
+  <h2>Proven end to end</h2>
+  <div class="cols">
+    <div>
+      <ul style="margin-bottom:0">
+        <li>SingleMeet: multi-party, live cross-language captions</li>
+        <li>Webchat: customer bootstrap → routed agent → reply</li>
+        <li>Voice inbound: number → IVR → queue → agent</li>
+      </ul>
+    </div>
+    <div>
+      <ul style="margin-bottom:0">
+        <li>OmniChannel: one console, all three channels, one run</li>
+        <li>Fan-out: concurrent calls across distinct agents</li>
+        <li>Agent-assist rule validation · baseline regression guard</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>What a run leaves behind</h2>
+  <div class="cols">
+    <div>
+      <table style="margin-bottom:0">
+        <tr>
+          <td class="k">The report</td>
+          <td>Every assertion with its expression, its verdict and what it actually observed — printed, and the input to the baseline.</td>
+        </tr>
+        <tr>
+          <td class="k">The baseline</td>
+          <td><code>baseline/baseline.json</code>, committed beside the scenario, so a regression is a diff rather than a memory.</td>
+        </tr>
+        <tr>
+          <td class="k">The evidence</td>
+          <td>Per-party console logs, screenshots and audio under <code>runs/</code>, named after the scenario that produced them.</td>
+        </tr>
+      </table>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Guarded by construction</h3>
+      <p style="margin:0">Every scenario declares the environments it may run on, and production is forbidden in the file itself. Secrets are references, never values — nothing an agent drives can reach a cluster it was not given, and no credential passes through the tooling.</p>
+    </div>
+  </div>
+
+  <div class="runner"><span>Understudy</span><span>SingleComm Engineering</span></div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Editor and OS noise only — the built PDFs are deliberately committed, since the
+# point of this repo is that the artefacts are reproducible AND ready to print.
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+node_modules/
