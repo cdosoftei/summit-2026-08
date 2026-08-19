@@ -177,17 +177,17 @@ expect:
 <section class="slide" data-tag="understudy">
   <span class="mode">Live · QA</span>
   <h2>And the one that looks like the future</h2>
-  <pre>pnpm understudy run scenarios/meet/attribution-4party-multilang \
+  <pre>pnpm understudy run scenarios/meet/four-language-showcase \
     --env qa --execute <span class="f">--headed --hold</span></pre>
-  <p class="wide">Four people in one SingleMeet room — English, Spanish and French — with live captions for all of them.</p>
-  <div class="callout">Nobody in this room could stage that in an afternoon. It is one command, and it is repeatable tomorrow.</div>
+  <p class="wide">Four people in one SingleMeet room — English, Spanish, French and German — each with live captions in their own language.</p>
+  <div class="callout">Nobody in this room could stage that in an afternoon. It is one command, and it is identical tomorrow.</div>
   <aside class="notes">
-    <p class="do">Prerequisites, once: <code>set -a; source secrets/qa.env; set +a</code> then <code>pnpm bundle:runtime &amp;&amp; pnpm bundle:meet</code>. No captured session needed — all four parties are standalone, so nobody signs into a console.</p>
-    <p class="do"><strong>Watch one window, not all four.</strong> With <code>--headed</code> each party now renders a tile grid of the whole room — itself plus the other three — with a caption strip underneath. Maximise one window and let the others sit behind it.</p>
-    <p class="do"><code>--hold</code> keeps the windows open until you press Enter. Use it.</p>
-    <p class="say">"Riley opens the room, then Sofía, Pierre and Dana join it. Four phases: clean alternation, then rapid interjections, then long turns, then a closing round."</p>
-    <p><strong>What it is really for:</strong> measuring caption speaker <em>attribution</em> — one mixed speech stream serves the whole room, so who said what is inferred afterwards. Each caption in the strip is tagged with the identity the worker attributed it to, so a misattribution is visible on screen. Say that if anyone asks why the script sounds so stilted.</p>
-    <p class="do">This is the most visually striking moment in the session. Let it run.</p>
+    <p class="do">Prerequisites, once: <code>set -a; source secrets/qa.env; set +a</code> · <code>export UNDERSTUDY_TTS_BACKEND=openai</code> · <code>pnpm bundle:runtime &amp;&amp; pnpm bundle:meet</code>. No captured session — all four parties are standalone, so nobody signs into a console.</p>
+    <p class="do"><strong>Maximise ONE window.</strong> Every party renders the whole room — four tiles plus a caption strip — so one window is the entire demo. <code>--hold</code> keeps them open until you press Enter.</p>
+    <p><strong>The audio is cached</strong>, keyed by content hash, so it costs nothing, needs no API round-trip, and sounds exactly as it did in rehearsal. ~1m45.</p>
+    <p class="say">"Riley opens the room; Sofía, Pierre and Greta join it. Three rounds — they introduce themselves, they notice you, and they sign off."</p>
+    <p class="do">Let the joke land: Greta's "und wenn nicht, dann ist es eben ein Fehlerbericht" — <em>and if not, it's a bug report</em> — is deadpan on purpose. Then Pierre's line is the actual point: <em>that is what a replayable test is</em>.</p>
+    <p>If asked how the voices differ: each party has a distinct voice and an explicit native-accent instruction. The default would have made all four sound like one narrator reading four parts.</p>
   </aside>
 </section>
 

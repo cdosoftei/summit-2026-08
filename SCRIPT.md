@@ -113,21 +113,23 @@ Anything in `‹ ›` is a stage direction. Slide numbers match the deck.
 
 ---
 
-## Slide 11 · Four in a room, three languages — live on QA
+## Slide 11 · Four in a room, four languages — live on QA
 
 `‹ Give this room. Maximise ONE window — each party renders the whole room, so one window
   shows all four tiles plus the caption strip. ›`
 
 > Same machinery as the voice one. Different channel, four parties instead of two — English,
-> Spanish and French, all in one room, captions live.
+> Spanish, French and German, all in one room, captions live.
 >
-> Nobody in this room could stage that in an afternoon. It's one command, and it's
-> repeatable tomorrow.
+> Nobody in this room could stage that in an afternoon. It's one command, and it's identical
+> tomorrow.
 
-`‹ If asked why the script sounds stilted: every line carries the speaker's own name on
-  purpose. One mixed speech stream serves the whole room, so who-said-what is inferred
-  afterwards — the names are the ground truth. Each caption in the strip is tagged with the
-  identity the system attributed it to, so a mistake is visible on screen. ›`
+`‹ Let Greta's line land — "und wenn nicht, dann ist es eben ein Fehlerbericht", and if not,
+  it's a bug report. It is deadpan on purpose. Then Pierre says the actual point out loud:
+  that is what a replayable test is. ›`
+
+`‹ If asked about the voices: each party has its own voice and an explicit native-accent
+  instruction. The vendor default would have made all four sound like one narrator. ›`
 
 ---
 

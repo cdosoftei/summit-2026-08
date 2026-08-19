@@ -40,7 +40,7 @@ verified → reviewed rule.
 | 4–8 | The problem · what it is · the inversion · a scenario | 0:09 | 10 min | slides |
 | 9 | The catalog | 0:19 | 2 min | **live, local** |
 | 10 | A voice call, headed | 0:21 | 5 min | **live, QA** |
-| 11 | Four in a room, three languages | 0:26 | 6 min | **live, QA** |
+| 11 | Four in a room, four languages | 0:26 | 6 min | **live, QA** |
 | 12 | Record → replay | 0:32 | 4 min | slide |
 | — | *Questions, then a break* | 0:36 | — | 15 min |
 | 13 | *SingleConsole* | 0:51 | — | divider |
@@ -119,8 +119,8 @@ call, you are watching the console an agent would be looking at while a syntheti
 talks to it. Say the sentence about UAT out loud.
 
 The four-party multilingual SingleMeet run is the most visually striking thing in the
-session — four people in one room across English, Spanish and French, with live captions.
-Give it room and let it play while you talk.
+session — four people in one room across English, Spanish, French and German, each with
+live captions in their own language. Give it room and let it play while you talk.
 
 ### SingleConsole (slides 14–17)
 Keep it to twenty minutes. The console is context; the Tower is the payload.

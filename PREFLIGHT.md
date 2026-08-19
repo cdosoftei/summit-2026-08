@@ -96,6 +96,7 @@ Both live runs are the centrepiece of part one, so run them end to end at least 
 ```bash
 cd ~/Work/understudy
 set -a; source secrets/qa.env; set +a          # SingleMeet API key etc. — never inline these
+export UNDERSTUDY_TTS_BACKEND=openai          # WITHOUT this you get local, robotic voices
 pnpm build && pnpm bundle:runtime && pnpm bundle:voice && pnpm bundle:meet
 node scripts/capture-session.mjs ciprian      # only needed for the co-resident agent leg
 node scripts/capture-session.mjs --pool agent
@@ -104,11 +105,16 @@ node scripts/capture-session.mjs --pool agent
 pnpm understudy run scenarios/voice/r3a-healthfirst-inbound \
     --env qa --execute --headed
 
-# the four-party multilingual meet run — English, Spanish, French, live captions.
+# the four-party, four-language meet run — English, Spanish, French, German, live captions.
 # All four parties are standalone, so no captured session is needed for this one.
-pnpm understudy run scenarios/meet/attribution-4party-multilang \
+pnpm understudy run scenarios/meet/four-language-showcase \
     --env qa --execute --headed --hold
 ```
+
+**Warm the audio before you present.** Run the meet scenario once WITHOUT `--execute`: it
+renders and caches all twelve turns by content hash, so on the day there is no vendor
+round-trip, no cost and no chance of a different-sounding take. ~64s of speech, ~1m45 with
+the gaps.
 
 **Dry-run either of them without a browser** by dropping `--execute` — it prints the
 resolved parties, campaign bindings and step order in about a second. Do that first; it
